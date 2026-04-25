@@ -1,0 +1,29 @@
+{
+  "name": "email-disposable-checker",
+  "version": "1.0.0",
+  "description": "A high-performance Node.js package to detect disposable and temporary email addresses.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js",
+    "update-list": "node scripts/update-list.js"
+  },
+  "keywords": [
+    "email",
+    "disposable",
+    "temporary",
+    "validation",
+    "spam-prevention",
+    "checker"
+  ],
+  "author": "Antigravity AI",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.15.2",
+    "email-validator": "^2.0.4",
+    "ioredis": "^5.10.1",
+    "mail-notifier": "^0.5.0",
+    "validator": "^13.15.35",
+    "whois-json": "^2.0.4"
+  }
+}
