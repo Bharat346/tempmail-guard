@@ -1,0 +1,10 @@
+# Exclude development and configuration files
+node_modules/
+.git/
+.gitignore
+test.js
+scripts/
+.gemini/
+*.log
+.DS_Store
+package-lock.json

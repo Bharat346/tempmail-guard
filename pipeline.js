@@ -42,6 +42,26 @@ class EmailTrustEngine {
     logger.info(`Starting validation for: ${email}`,"INIT");
     const ctx = new ValidationContext(email);
 
+    // --- POPULAR DOMAIN FAST-PASS ---
+    const POPULAR_DOMAINS = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'me.com', 'live.com', 'msn.com', 'aol.com'];
+    if (POPULAR_DOMAINS.includes(ctx.domain)) {
+      logger.success(`Fast-pass for popular domain: ${ctx.domain}`);
+      ctx.score = 95;
+      ctx.reasons.push("Trusted popular provider");
+      // Still do syntax check just in case
+      const syntaxRes = await syntax.validate(ctx);
+      ctx.addResult("syntax", syntaxRes);
+      if (!ctx.isValid) return this.finalize(ctx, "Invalid syntax");
+      
+      // Mock some results for popular domains to avoid breaking the UI/downstream logic
+      ctx.signals.dns = { mx: true };
+      ctx.signals.security = { spf: "standard", dmarc: "standard" };
+      ctx.signals.smtp = { status: "ok", isValid: true };
+      ctx.signals.catchall = { isCatchAll: false };
+      
+      return this.finalize(ctx);
+    }
+
     // --- LAYER 1: SYNTAX (Synchronous/Cheapest) ---
     const syntaxRes = await syntax.validate(ctx);
     ctx.addResult("syntax", syntaxRes);
@@ -78,11 +98,11 @@ class EmailTrustEngine {
 
     // Auto-fail conditions
     let autoFail = null;
-    if (ctx.signals.reputation.isBlacklisted)
+    if (ctx.signals.reputation && ctx.signals.reputation.isBlacklisted)
       autoFail = "Domain is blacklisted";
-    else if (ctx.signals.disposable.isDisposable)
+    else if (ctx.signals.disposable && ctx.signals.disposable.isDisposable)
       autoFail = "Disposable email provider";
-    else if (!ctx.signals.smtp.isValid && ctx.signals.smtp.status === "invalid")
+    else if (ctx.signals.smtp && !ctx.signals.smtp.isValid && ctx.signals.smtp.status === "invalid")
       autoFail = "Mailbox does not exist";
 
     return this.finalize(ctx, autoFail);

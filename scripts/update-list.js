@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join(__dirname, '../data');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'domains.json');
 
 async function updateList() {
-    console.log('🚀 Fetching latest disposable email domains...');
+    console.log('Fetching latest disposable email domains...');
     try {
         if (!fs.existsSync(OUTPUT_DIR)) {
             fs.mkdirSync(OUTPUT_DIR, { recursive: true });

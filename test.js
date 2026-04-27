@@ -2,12 +2,8 @@ const emailValidator = require('./index');
 
 async function runTests() {
     const testEmails = [
-        // 'user@gmail.com',
-        // 'invalid-email.com',
-        // 'test@10minutemail.com',
-        // 'admin@google.com',
-        // 'nonexistent-mailbox@gmail.com',
-        'wokowa7948@ryzid.com'
+        'nehyfegyjywih5@maximail.fyi',
+        'gylujupemeh3@mail2me.co',
     ];
 
     console.log('============================================');
@@ -18,14 +14,16 @@ async function runTests() {
         console.log(`🔍 Validating: ${email}`);
         const result = await emailValidator.validate(email);
         
-        console.log(`   Overall Result: ${result.isValid ? '✅ VALID' : '❌ INVALID'}`);
-        console.log(`   Score: ${result.score}/100`);
+        console.log(`   Overall Result: ${result.valid ? '✅ VALID' : '❌ INVALID'}`);
+        console.log(`   Score: ${result.trust_score}/100`);
+        console.log(`   Category: ${result.category}`);
         
         // Print key details
-        Object.entries(result.details).forEach(([key, detail]) => {
-            const status = detail.isValid ? '✅' : '❌';
-            console.log(`   ├─ ${key.padEnd(12)}: ${status} ${detail.message}`);
+        Object.entries(result.signals).forEach(([key, detail]) => {
+            const detailStr = detail ? JSON.stringify(detail) : 'null';
+            console.log(`   ├─ ${key.padEnd(12)}: ${detailStr.substring(0, 100)}${detailStr.length > 100 ? '...' : ''}`);
         });
+        console.log(`   Reasons: ${result.reasons.join(', ')}`);
         console.log('\n--------------------------------------------\n');
     }
 }

@@ -59,17 +59,27 @@ module.exports = {
             });
 
             socket.on('error', (err) => {
-                resolve({ isValid: true, score: 0, message: `SMTP Error (Skipped): ${err.message}`, status: 'error' });
+                socket.destroy();
+                resolve({ isValid: true, score: 0, message: `SMTP Error: ${err.message}`, status: 'error' });
             });
 
             socket.on('timeout', () => {
                 socket.destroy();
-                resolve({ isValid: true, score: 0, message: 'SMTP Timeout (Skipped)', status: 'timeout' });
+                resolve({ isValid: true, score: 0, message: 'SMTP Timeout', status: 'timeout' });
             });
 
             socket.on('close', () => {
+                if (!socket.destroyed) socket.destroy();
                 resolve({ ...result, data: result });
             });
+
+            // Ensure we resolve if something goes wrong and no events fire
+            setTimeout(() => {
+                if (!socket.destroyed) {
+                    socket.destroy();
+                    resolve({ isValid: true, score: 0, message: 'SMTP Global Timeout', status: 'timeout' });
+                }
+            }, 12000);
         });
     }
 };

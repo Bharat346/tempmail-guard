@@ -52,17 +52,15 @@ class ValidationContext {
 
     isDomainInBlacklist(domain) {
         const set = ValidationContext.getGlobalDomains();
-        const target = domain.toLowerCase();
+        let target = domain.toLowerCase();
         
-        if (set.has(target)) return true;
-        
-        // Subdomain check
-        const parts = target.split('.');
-        if (parts.length > 2) {
-            for (let i = 0; i < parts.length - 1; i++) {
-                const sub = parts.slice(i).join('.');
-                if (set.has(sub)) return true;
-            }
+        while (target) {
+            if (set.has(target)) return true;
+            const nextDot = target.indexOf('.');
+            if (nextDot === -1) break;
+            target = target.substring(nextDot + 1);
+            // Don't check just the TLD (e.g., .com)
+            if (!target.includes('.')) break;
         }
         return false;
     }
