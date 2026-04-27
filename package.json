@@ -1,6 +1,6 @@
 {
   "name": "tempmail-guard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A high-performance, multi-layer email trust engine for advanced validation, reputation scoring, and security analysis.",
   "main": "index.js",
   "files": [
